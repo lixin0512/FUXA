@@ -2,11 +2,45 @@
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'widgets.kiosk-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
+        <!-- 拖拽上传区域 -->
+        <div class="drag-upload-area"
+             [class.drag-over]="isDragOver"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)"
+             (click)="onUploadClick()">
+            <div class="drag-upload-content">
+                <mat-icon class="drag-icon">cloud_upload</mat-icon>
+                <p class="drag-text">{{'resources.drag-drop-text' | translate}}</p>
+                <p class="drag-hint">{{'resources.drag-drop-hint' | translate}}</p>
+            </div>
+        </div>
+        
+        <div class="upload-controls">
+            <span class="upload-formats-text">{{'resources.upload-formats' | translate}}</span>
+            <div class="upload-button-wrapper">
+                <button mat-raised-button color="primary" (click)="onUploadClick()" [disabled]="isUploading" class="upload-button">
+                    <mat-icon *ngIf="!isUploading" class="upload-icon">cloud_upload</mat-icon>
+                    <mat-spinner *ngIf="isUploading" diameter="16" class="upload-spinner"></mat-spinner>
+                    <span>{{isUploading ? ('resources.uploading' | translate) + ' (' + uploadProgress.completed + '/' + uploadProgress.total + ')' : ('resources.upload-image' | translate)}}</span>
+                </button>
+            </div>
+            <input #fileInput type="file" style="display: none;" (change)="onFileSelected($event)" accept=".png,.gif,.bmp,.jpg,.jpeg,.svg" multiple />
+        </div>
+
         <mat-accordion multi="true">
             <mat-expansion-panel *ngFor="let group of resourceWidgets$ | async" class="widget-panel"
                 (opened)="onGroupExpand(group.path)">
                 <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
                     <mat-panel-title>
+                        <mat-checkbox 
+                            *ngIf="groupContent[group.path]"
+                            [checked]="isGroupAllSelected(group.path, groupContent[group.path])"
+                            [indeterminate]="isGroupPartiallySelected(group.path, groupContent[group.path])"
+                            (click)="$event.stopPropagation()"
+                            (change)="onToggleSelectAll(group.path, groupContent[group.path])"
+                            style="margin-right: 8px;">
+                        </mat-checkbox>
                         {{group.name}}
                     </mat-panel-title>
                     <mat-panel-description>
@@ -20,9 +54,17 @@
                     <div *ngFor="let item of items"
                          class="content-item"
                          [class.item-exists]="item.exist"
+                         [class.item-selected]="!item.exist && isItemSelected(group.path, item.path)"
                          matTooltip="{{item.name}}">
+                        <mat-checkbox 
+                            *ngIf="!item.exist"
+                            [checked]="isItemSelected(group.path, item.path)"
+                            (click)="$event.stopPropagation()"
+                            (change)="onToggleSelect(group.path, item.path)"
+                            class="item-checkbox">
+                        </mat-checkbox>
                         <img [src]="assetBaseUrl + item.path" [id]="item.path">
-                        <div class="download-icon" *ngIf="!item.exist">
+                        <div class="download-icon" *ngIf="!item.exist && !isItemSelected(group.path, item.path)">
                             <mat-icon (click)="onDownload(item)" matTooltip="Download">download</mat-icon>
                         </div>
                     </div>
@@ -34,6 +76,20 @@
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
+        <div style="flex: 1; display: flex; align-items: center; margin-right: 16px;">
+            <button mat-raised-button 
+                    (click)="onBatchDownload()" 
+                    [disabled]="isDownloading || getAllSelectedItems().length === 0"
+                    color="accent"
+                    style="margin-right: 8px;">
+                <mat-icon *ngIf="!isDownloading" style="vertical-align: middle; margin-right: 5px;">download</mat-icon>
+                <mat-spinner *ngIf="isDownloading" diameter="16" style="display: inline-block; margin-right: 5px;"></mat-spinner>
+                <span>{{isDownloading ? ('widgets.downloading' | translate) + ' (' + downloadProgress.completed + '/' + downloadProgress.total + ')' : ('widgets.batch-download' | translate)}}</span>
+            </button>
+            <span *ngIf="getAllSelectedItems().length > 0" style="font-size: 12px; color: rgba(0,0,0,0.6);">
+                {{'widgets.selected-count' | translate: {count: getAllSelectedItems().length} }}
+            </span>
+        </div>
         <button mat-raised-button (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
     </div>
 </div>

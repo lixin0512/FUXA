@@ -79,7 +79,7 @@
     "header.edit-users": "用户设置",
     "header.edit-alarms": "警报设置",
     "header.edit-texts": "文本设置",
-    "header.help": "FUXA帮助",
+    "header.help": "SCADA帮助",
     "header.help-tutorial": "教程",
     "header.help-info": "关于",
     "header.change-thema": "切换主题(beta)",
@@ -88,11 +88,11 @@
 
     "project.name": "项目名称",
 
-    "sidenav.title": "FUXA",
+    "sidenav.title": "SCADA",
 
-    "tutorial.title": "FUXA教程",
+    "tutorial.title": "SCADA教程",
 
-    "dlg.info-title": "FUXA",
+    "dlg.info-title": "SCADA",
 
     "dlg.layout-title": "布局设置",
     "dlg.layout-general": "常规",
@@ -961,7 +961,7 @@
     "device.tags-template-name-title": "标签模板名称",
     "devices.import-template": "导入连接模板",
     "device.property-client": "设备属性",
-    "device.property-server": "FUXA服务器属性",
+    "device.property-server": "SCADA服务器属性",
     "device.property-name": "名称",
     "device.property-type": "类型",
     "device.property-polling": "轮询",
@@ -1049,7 +1049,7 @@
     "device.property-redis-writeName-ph": "（例如：DAINSY.HSET）",
     "device.property-redis-write-keyName": "写入键-名称",
     "device.property-redis-write-keyValue": "写入键-值",
-    "device.property-redis-write-args-tooltip": "在写入键-名称/写入键-值下：使用{{token}}表示动态值，如{{timestamp}}、{{provider}}、{{quality}}。\n\n不带{{}}的值被视为字面量。\n\n示例：名称=Provider，值=fuxa — 或名称=UtcTimeMs，值={{timestamp}}。",
+    "device.property-redis-write-args-tooltip": "在写入键-名称/写入键-值下：使用{{token}}表示动态值，如{{timestamp}}、{{provider}}、{{quality}}。\n\n不带{{}}的值被视为字面量。\n\n示例：名称=Provider，值=SCADA — 或名称=UtcTimeMs，值={{timestamp}}。",
     "device.property-redis-scan-title": "扫描要导入的标签",
     "device.property-redis-scan-filter-query": "过滤器（模式匹配）",
     "device.property-redis-scan-filter-list": "列表过滤器",
@@ -1506,7 +1506,7 @@
     "script.template-getHistoricalTagsoptions-tooltip": "获取历史标签值的代码模板。",
 
     "client.script-access-title": "客户端脚本访问",
-    "client.script-access-info": "通过window.fuxaScriptAPI配置对前端（例如小部件）的系统函数访问。",
+    "client.script-access-info": "通过window.SCADAScriptAPI配置对前端（例如小部件）的系统函数访问。",
 
     "reports.list-title": "报告设置",
     "reports.list-name": "名称",
@@ -1620,6 +1620,11 @@
 
     "resources.lib-icons": "图标",
     "resources.lib-images": "图片",
+    "resources.upload-image": "上传图片",
+    "resources.uploading": "上传中...",
+    "resources.upload-formats": "支持 PNG、GIF、BMP、JPG、JPEG、SVG 格式",
+    "resources.drag-drop-text": "拖拽图片到此处或点击选择文件",
+    "resources.drag-drop-hint": "支持批量上传多个图片文件",
     "resource.list-title": "资源列表",
     "resource.list-name": "文件名称",
     "resource.list-type": "文件类型",
@@ -1627,6 +1632,9 @@
     "resources.lib-widgets": "小部件",
 
     "widgets.kiosk-title": "小部件",
+    "widgets.batch-download": "批量下载",
+    "widgets.downloading": "下载中",
+    "widgets.selected-count": "已选择 {{count}} 项",
     "widget.remove": "删除小部件",
 
     "texts.list-title": "文本设置",
@@ -1782,6 +1790,7 @@
     "msg.notification-property-missing-value": "一些数值丢失！",
     "msg.report-property-missing-value": "有不正确或缺失的值！",
     "msg.file-upload-failed": "上传失败！",
+    "msg.file-upload-success": "上传成功！",
     "msg.file-delete-failed": "删除文件失败！",
 
     "msg.home-welcome": "请稍候......去编辑器，映射设备，设计你的可视化并绑定设备的变量",

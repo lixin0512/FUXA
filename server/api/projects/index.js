@@ -209,10 +209,23 @@ module.exports = {
                 }
                 let filePath = path.join(runtime.settings.uploadFileDir, fullPath || fileName);
                 if (destination) {
-                    let destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
-                    if (process.versions.electron) {
-                        const userDataDir = process.env.userDir || path.join(os.homedir(), '.fuxa');
-                        destinationDir = path.join(userDataDir, `_${destination}`);
+                    let destinationDir;
+                    if (destination === 'images') {
+                        // 图片保存到 _images/uploaded 子目录，以便资源菜单可以加载
+                        destinationDir = runtime.settings.imagesFileDir;
+                        // 确保保存到子目录中
+                        fullPath = path.join('uploaded', fullPath || fileName);
+                    } else if (destination === 'widgets') {
+                        // 图片保存到 _widgets/uploaded 子目录，以便小部件菜单可以加载
+                        destinationDir = runtime.settings.widgetsFileDir;
+                        // 确保保存到子目录中
+                        fullPath = path.join('uploaded', fullPath || fileName);
+                    } else {
+                        destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
+                        if (process.versions.electron) {
+                            const userDataDir = process.env.userDir || path.join(os.homedir(), '.fuxa');
+                            destinationDir = path.join(userDataDir, `_${destination}`);
+                        }
                     }
                     filePath = path.join(destinationDir, fullPath || fileName);
                     const dir = path.dirname(filePath);
@@ -221,7 +234,16 @@ module.exports = {
                     }
                 }
                 fs.writeFileSync(filePath, basedata, encoding);
-                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' + fullPath || fileName };
+                // 返回正确的路径：如果是 images，返回 _images 路径；如果是 widgets，返回 _widgets 路径；否则返回 resources 路径
+                let locationPath;
+                if (destination === 'images') {
+                    locationPath = '/' + path.join('_images', fullPath || fileName).split(path.sep).join('/');
+                } else if (destination === 'widgets') {
+                    locationPath = '/' + path.join('_widgets', fullPath || fileName).split(path.sep).join('/');
+                } else {
+                    locationPath = '/' + runtime.settings.httpUploadFileStatic + '/' + (fullPath || fileName);
+                }
+                let result = {'location': locationPath };
                 res.json(result);
             } catch (err) {
                 if (err && err.code) {

@@ -13,6 +13,7 @@ import { AppService } from './_services/app.service';
 import { HeartbeatService } from './_services/heartbeat.service';
 import { AuthService } from './_services/auth.service';
 import { HmiService } from './_services/hmi.service';
+import { IndexedDBService } from './_services/indexeddb.service';
 
 @Component({
 	selector: 'app-root',
@@ -44,6 +45,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private cdr: ChangeDetectorRef,
 		private hmiService: HmiService,
 		private authService: AuthService,
+		private indexedDB: IndexedDBService,
 		location: Location
 	) {
 		this.location = location;
@@ -51,6 +53,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngOnInit() {
 		console.log(`FUXA v${environment.version}`);
+		
+		// 自动从 localStorage 迁移数据到 IndexedDB（仅在首次启动时）
+		this.indexedDB.autoMigrateFromLocalStorage().subscribe({
+			next: (migrated) => {
+				if (migrated) {
+					console.log('数据迁移完成：已从 localStorage 迁移到 IndexedDB');
+				}
+			},
+			error: (err) => {
+				console.error('自动迁移数据失败:', err);
+			}
+		});
+		
 		this.heartbeatService.startHeartbeatPolling();
 
 		// capture events for the token refresh

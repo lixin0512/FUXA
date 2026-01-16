@@ -10,6 +10,7 @@ export class LibWidgetsService {
 
     clearSelection$ = new Subject<void>();
     svgWidgetSelected$ = new Subject<string>();
+    imageWidgetSelected$ = new Subject<string>(); // 用于图片格式的小部件
     private refreshSubject = new Subject<void>();
 
     constructor(
@@ -30,8 +31,12 @@ export class LibWidgetsService {
     }
 
     widgetSelected(widgetPath: string) {
-        if (widgetPath.split('.').pop().toLowerCase() === 'svg') {
+        const extension = widgetPath.split('.').pop().toLowerCase();
+        if (extension === 'svg') {
             this.svgWidgetSelected$.next(widgetPath);
+        } else if (['png', 'gif', 'bmp', 'jpg', 'jpeg'].includes(extension)) {
+            // 图片格式的小部件
+            this.imageWidgetSelected$.next(widgetPath);
         }
     }
 

@@ -1,6 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from 'rxjs';
+import {first} from 'rxjs/operators';
 import {Router} from '@angular/router';
 
 import {DeviceListComponent} from './device-list/device-list.component';
@@ -10,6 +11,7 @@ import {ProjectService} from '../_services/project.service';
 import {HmiService} from '../_services/hmi.service';
 import {DEVICE_READONLY} from '../_models/hmi';
 import {Utils} from '../_helpers/utils';
+import {IndexedDBService} from '../_services/indexeddb.service';
 
 @Component({
     selector: 'app-device',
@@ -39,11 +41,17 @@ export class DeviceComponent implements OnInit, OnDestroy {
 
     constructor(private router: Router,
         private projectService: ProjectService,
-        private hmiService: HmiService) {
+        private hmiService: HmiService,
+        private indexedDB: IndexedDBService) {
         if (this.router.url.indexOf(DEVICE_READONLY) >= 0) {
             this.readonly = true;
         }
-        this.showMode = localStorage.getItem('@frango.devicesview') || this.devicesViewMap;
+        this.indexedDB.getItem('@frango.devicesview').pipe(first()).subscribe(mode => {
+            this.showMode = mode || this.devicesViewMap;
+        }, err => {
+            console.error('获取设备视图模式失败:', err);
+            this.showMode = this.devicesViewMap;
+        });
     }
 
     ngOnInit() {
@@ -95,7 +103,10 @@ export class DeviceComponent implements OnInit, OnDestroy {
             } catch (e) {
             }
         } else {
-            localStorage.setItem('@frango.devicesview', this.showMode);
+            this.indexedDB.setItem('@frango.devicesview', this.showMode).subscribe({
+                next: () => {},
+                error: (err) => console.error('保存设备视图模式失败:', err)
+            });
         }
     }
 
@@ -108,8 +119,12 @@ export class DeviceComponent implements OnInit, OnDestroy {
             }
             return;
         }
-        let mode = localStorage.getItem('@frango.devicesview') || this.devicesViewMap;
-        this.show(mode);
+        this.indexedDB.getItem('@frango.devicesview').pipe(first()).subscribe(mode => {
+            this.show(mode || this.devicesViewMap);
+        }, err => {
+            console.error('获取设备视图模式失败:', err);
+            this.show(this.devicesViewMap);
+        });
     }
 
     gotoList(device: Device) {

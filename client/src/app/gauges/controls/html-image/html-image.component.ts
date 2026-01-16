@@ -15,6 +15,7 @@ import { ShapesComponent } from '../../shapes/shapes.component';
 import { EndPointApi } from '../../../_helpers/endpointapi';
 import { SvgUtils, WidgetPropertyVariable } from '../../../_helpers/svg-utils';
 import { DeviceType } from '../../../_models/device';
+import { IndexedDBService } from '../../../_services/indexeddb.service';
 
 declare var SVG: any;
 
@@ -30,6 +31,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
     static prefixD = 'D-OXC_';
     static endPointConfig: string = EndPointApi.getURL();
     static propertyWidgetType = 'widget';
+    static indexedDBService: IndexedDBService = null;
 
     static actionsType = {
         hide: GaugeActionsType.hide,
@@ -47,6 +49,58 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         super();
     }
 
+    /**
+     * 更新 SVG 内容（用于异步更新）
+     */
+    private static updateSvgContent(svgContent: string, gaugeSettings: GaugeSettings, svgImageContainer: HTMLElement) {
+        if (SvgUtils.isSVG(gaugeSettings.property.address) && svgContent) {
+            svgImageContainer.innerHTML = '';
+            svgImageContainer.setAttribute('type', HtmlImageComponent.propertyWidgetType);
+            const parser = new DOMParser();
+            const svgDocument = parser.parseFromString(svgContent, 'image/svg+xml');
+            const svgElement = svgDocument.querySelector('svg');
+            if (svgElement) {
+                const originSize = SvgUtils.getSvgSize(svgElement);
+                const parentElement = svgImageContainer.parentElement?.parentElement;
+                if (parentElement) {
+                    SvgUtils.resizeSvgNodes(parentElement as any, originSize);
+                    parentElement.removeAttribute('stroke');
+                }
+                svgElement.setAttribute('width', originSize.width.toString());
+                svgElement.setAttribute('height', originSize.height.toString());
+                
+                if (!gaugeSettings.property.svgContent) {
+                    const scripts = svgElement.querySelectorAll('script');
+                    const svgGuid = Utils.getShortGUID('', '_');
+                    const svgIdsMap = SvgUtils.renameIdsInSvg(svgElement, svgGuid);
+                    const moduleId = `wModule_${svgGuid}`;
+                    let widgetResult;
+                    scripts?.forEach(script => {
+                        widgetResult = SvgUtils.processWidget(script.textContent, moduleId, svgIdsMap, gaugeSettings.property?.varsToBind);
+                        script.parentNode.removeChild(script);
+                    });
+                    svgImageContainer.appendChild(svgElement);
+                    gaugeSettings.property = <WidgetProperty>{
+                        ...gaugeSettings.property,
+                        type: HtmlImageComponent.propertyWidgetType,
+                        svgGuid: svgGuid,
+                        svgContent: svgImageContainer.innerHTML,
+                        scriptContent: { moduleId: moduleId, content: widgetResult?.content },
+                        varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
+                    };
+                } else {
+                    svgImageContainer.appendChild(svgElement);
+                }
+                
+                if (gaugeSettings.property.scriptContent) {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = SvgUtils.initWidget(gaugeSettings.property.scriptContent.content, gaugeSettings.property.varsToBind);
+                    document.body.appendChild(newScript);
+                }
+            }
+        }
+    }
+
     static initElement(gaugeSettings: GaugeSettings, isview: boolean): HTMLElement {
         let svgImageContainer = null;
         let ele = document.getElementById(gaugeSettings.id);
@@ -54,7 +108,35 @@ export class HtmlImageComponent extends GaugeBaseComponent {
             ele?.setAttribute('data-name', gaugeSettings.name);
             svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgImageContainer) {
-                let svgContent = gaugeSettings.property.svgContent ?? localStorage.getItem(gaugeSettings.property.address);
+                let svgContent = gaugeSettings.property.svgContent;
+                // 如果没有 svgContent，尝试从 IndexedDB 获取
+                if (!svgContent && gaugeSettings.property.address) {
+                    // 优先从 IndexedDB 获取（同步方法，用于初始化）
+                    if (this.indexedDBService) {
+                        // 先尝试同步获取（如果可能）
+                        this.indexedDBService.getItemSync(gaugeSettings.property.address).then(content => {
+                            if (content && svgImageContainer) {
+                                // 如果获取到内容，更新 SVG
+                                this.updateSvgContent(content, gaugeSettings, svgImageContainer);
+                            }
+                        }).catch(err => {
+                            console.error('从 IndexedDB 同步获取 SVG 内容失败:', err);
+                        });
+                        
+                        // 同时使用异步方法作为备用
+                        this.indexedDBService.getItem(gaugeSettings.property.address).subscribe({
+                            next: (content) => {
+                                if (content && svgImageContainer) {
+                                    // 如果获取到内容，更新 SVG
+                                    this.updateSvgContent(content, gaugeSettings, svgImageContainer);
+                                }
+                            },
+                            error: (err) => {
+                                console.error('从 IndexedDB 获取 SVG 内容失败:', err);
+                            }
+                        });
+                    }
+                }
                 if (SvgUtils.isSVG(gaugeSettings.property.address) && svgContent) {
                     svgImageContainer.innerHTML = '';
                     svgImageContainer.setAttribute('type', HtmlImageComponent.propertyWidgetType);

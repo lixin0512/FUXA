@@ -15,6 +15,7 @@ export class LibImagesComponent implements AfterViewInit, OnDestroy {
     private endPointConfig: string = EndPointApi.getURL();
     resImages?: ResourceGroup[];
     subscription: Subscription;
+    draggedImage: string | null = null;
 
     constructor(
         private dialogRef: MatDialogRef<LibImagesComponent>,
@@ -33,14 +34,19 @@ export class LibImagesComponent implements AfterViewInit, OnDestroy {
     }
 
     loadResources() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
         this.subscription = this.resourcesService.getResources(ResourceType.images).subscribe((result: Resources) => {
             const groups = result?.groups || [];
-            groups.forEach(group => {
+            // 过滤掉 uploaded 项
+            const filteredGroups = groups.filter(group => group.name !== 'uploaded' && group.name !== 'uploaded/');
+            filteredGroups.forEach(group => {
                 group.items.forEach(item => {
                     item.path = `${this.endPointConfig}/${item.path}`;
                 });
             });
-            this.resImages = groups;
+            this.resImages = filteredGroups;
         }, err => {
             console.error('get Resources images error: ' + err);
         });
@@ -56,5 +62,18 @@ export class LibImagesComponent implements AfterViewInit, OnDestroy {
 
     isVideo(path: string): boolean {
         return this.resourcesService.isVideo(path);
+    }
+
+    onDragStart(event: DragEvent, imgPath: string) {
+        this.draggedImage = imgPath;
+        if (event.dataTransfer) {
+            event.dataTransfer.effectAllowed = 'copy';
+            // 设置拖拽数据
+            event.dataTransfer.setData('text/plain', imgPath);
+        }
+    }
+
+    onDragEnd(event: DragEvent) {
+        this.draggedImage = null;
     }
 }

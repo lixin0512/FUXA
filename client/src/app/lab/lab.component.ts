@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ViewContainerRef, ChangeDetectorRef  } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { ProjectService } from '../_services/project.service';
 import { AppService } from '../_services/app.service';
@@ -7,6 +8,7 @@ import { Hmi, View } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { TesterService } from '../tester/tester.service';
 import { TesterComponent } from '../tester/tester.component';
+import { IndexedDBService } from '../_services/indexeddb.service';
 
 declare var SVG: any;
 declare var Raphael: any;
@@ -34,7 +36,8 @@ export class LabComponent implements OnInit, OnDestroy {
         private appService: AppService,
         public gaugesManager: GaugesManager,
         private changeDetector: ChangeDetectorRef,
-        private testerService: TesterService) {
+        private testerService: TesterService,
+        private indexedDB: IndexedDBService) {
     }
 
     ngOnInit() {
@@ -80,22 +83,25 @@ export class LabComponent implements OnInit, OnDestroy {
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             this.currentView = this.hmi.views[0];
             this.labView = this.hmi.views[0];
-            let oldsel = localStorage.getItem('@frango.webeditor.currentview');
-            if (oldsel) {
-                for (let i = 0; i < this.hmi.views.length; i++) {
-                    if (this.hmi.views[i].name === oldsel) {
-                        this.currentView = this.hmi.views[i];
-                        this.setBackground();
-                        break;
+            this.indexedDB.getItem('@frango.webeditor.currentview').pipe(first()).subscribe(oldsel => {
+                if (oldsel) {
+                    for (let i = 0; i < this.hmi.views.length; i++) {
+                        if (this.hmi.views[i].name === oldsel) {
+                            this.currentView = this.hmi.views[i];
+                            this.setBackground();
+                            break;
+                        }
                     }
                 }
-            }
+            }, err => {
+                console.error('获取当前视图失败:', err);
+            });
         }
     }
 
     private setBackground() {
-		if (this.currentView && this.currentView.profile) {
-			this.backgroudColor = this.currentView.profile.bkcolor;
-		}
-	}
+        if (this.currentView && this.currentView.profile) {
+            this.backgroudColor = this.currentView.profile.bkcolor;
+        }
+    }
 }

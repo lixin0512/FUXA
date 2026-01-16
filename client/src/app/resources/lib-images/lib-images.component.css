@@ -4,6 +4,8 @@
     flex-direction: column;
     overflow: hidden;
     position: relative;
+    color: var(--toolboxColor, #000);
+    background-color: var(--toolboxBackground, #FBFBFB);
 }
 
 .container [mat-dialog-content],
@@ -11,6 +13,8 @@
 .container .mat-mdc-dialog-content {
     flex: 1 1 auto;
     overflow: auto;
+    color: var(--toolboxColor, #000);
+    background-color: var(--toolboxBackground, #FBFBFB);
 }
 
 .container [mat-dialog-actions],
@@ -18,6 +22,8 @@
 .container .mat-mdc-dialog-actions {
     display: flex;
     justify-content: flex-end;
+    border-top: 1px solid var(--toolboxBorder, #F1F3F4);
+    padding: 8px 16px;
 }
 
 .container .dialog-close-btn {
@@ -26,25 +32,94 @@
     right: 5px;
     float: none !important;
     margin: 0;
+    color: var(--toolboxColor, #000);
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.container .dialog-close-btn:hover {
+    opacity: 1;
+}
+
+.dialog-title {
+    color: var(--toolboxColor, #000);
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .lib-image-panel {
     max-width: 900px;
+    background-color: var(--toolboxPanelBackground, #f9f9f9);
+    margin-bottom: 8px;
+}
+
+.lib-image-panel .header {
+    background-color: var(--toolboxPanelBackground, #f9f9f9);
+    color: var(--toolboxColor, #000);
+    border-bottom: 1px solid var(--toolboxBorder, #F1F3F4);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.lib-image-panel .mat-expansion-panel-body {
+    padding: 8px !important;
+    background-color: var(--toolboxPanelBackground, #f9f9f9);
 }
 
 .lib-image-item {
     display: inline-block;
-    margin: 5px 5px 5px 5px;
-    padding: 2px 2px 2px 2px;
+    margin: 8px;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    cursor: grab;
+    position: relative;
 }
 
-.lib-image-item img:hover {
-    background-color: rgba(182, 182, 182, 0.3);
+.lib-image-item:hover {
+    background-color: rgba(48, 89, 175, 0.1);
+    border-color: var(--toolboxBorder, #F1F3F4);
+}
+
+.lib-image-item:hover::before {
+    box-shadow: inset 0 0 0 2px var(--toolboxItemActiveBackground, #3059af);
+    opacity: 0.3;
+}
+
+.lib-image-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 4px;
+    pointer-events: none;
+    transition: box-shadow 0.2s;
+}
+
+.lib-image-item:active {
+    cursor: grabbing;
+}
+
+.lib-image-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
 }
 
 .lib-image-item img {
-    min-width: 100px;
-    width: 100px;
-    object-fit: cover;
+    min-width: 85px;
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
     cursor: pointer;
+    border-radius: 2px;
+    background-color: var(--toolboxPanelBackground, #f9f9f9);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lib-image-item img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }

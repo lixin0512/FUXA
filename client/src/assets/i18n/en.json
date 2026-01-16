@@ -79,7 +79,7 @@
     "header.edit-users": "Users settings",
     "header.edit-alarms": "Alarms settings",
     "header.edit-texts": "Texts settings",
-    "header.help": "FUXA Help",
+    "header.help": "SCADA Help",
     "header.help-tutorial": "Tutorial",
     "header.help-info": "About",
     "header.change-thema": "Switch Theme (beta)",
@@ -88,11 +88,11 @@
 
     "project.name": "Project name",
 
-    "sidenav.title": "FUXA",
+    "sidenav.title": "SCADA",
 
-    "tutorial.title": "FUXA Tutorial",
+    "tutorial.title": "SCADA Tutorial",
 
-    "dlg.info-title": "FUXA",
+    "dlg.info-title": "SCADA",
 
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
@@ -1056,7 +1056,7 @@
     "device.tags-template-name-title": "Tags template name",
     "devices.import-template": "Import Connections with template",
     "device.property-client": "Connections Property",
-    "device.property-server": "FUXA Server Property",
+    "device.property-server": "SCADA Server Property",
     "device.property-name": "Name",
     "device.property-type": "Type",
     "device.property-polling": "Polling",
@@ -1145,7 +1145,7 @@
     "device.property-redis-writeName-ph": "(ex. DAINSY.HSET)",
     "device.property-redis-write-keyName": "Write Key-Name",
     "device.property-redis-write-keyValue": "Write Key-Value",
-    "device.property-redis-write-args-tooltip": "Under Write Key-Name / Write Key-Value:  use {{token}} for dynamic values such as {{timestamp}}, {{provider}}, {{quality}}.\n\nValues without {{}} are treated as literals.\n\nExample: Name=Provider, Value=fuxa — or Name=UtcTimeMs, Value={{timestamp}}.",
+    "device.property-redis-write-args-tooltip": "Under Write Key-Name / Write Key-Value:  use {{token}} for dynamic values such as {{timestamp}}, {{provider}}, {{quality}}.\n\nValues without {{}} are treated as literals.\n\nExample: Name=Provider, Value=SCADA — or Name=UtcTimeMs, Value={{timestamp}}.",
     "device.property-redis-scan-title": "Scan Tags to import",
     "device.property-redis-scan-filter-query": "Filter (pattern MATCH)",
     "device.property-redis-scan-filter-list": "List filter",
@@ -1628,7 +1628,7 @@
     "script.template-getHistoricalTagsoptions-tooltip": "Code template to get Historical Tags values.",
 
     "client.script-access-title": "Client Scripts access",
-    "client.script-access-info": "Configure access to system functions from the frontend (e.g. widgets) via window.fuxaScriptAPI.",
+    "client.script-access-info": "Configure access to system functions from the frontend (e.g. widgets) via window.SCADAScriptAPI.",
 
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",
@@ -1750,6 +1750,11 @@
 
     "resources.lib-icons": "Icons",
     "resources.lib-images": "Images",
+    "resources.upload-image": "Upload Image",
+    "resources.uploading": "Uploading...",
+    "resources.upload-formats": "Supports PNG, GIF, BMP, JPG, JPEG, SVG formats",
+    "resources.drag-drop-text": "Drag and drop images here or click to select files",
+    "resources.drag-drop-hint": "Supports batch upload of multiple image files",
     "resource.list-title": "Resources list",
     "resource.list-name": "File name",
     "resource.list-type": "File type",
@@ -1757,6 +1762,9 @@
     "resources.lib-widgets": "Widgets",
 
     "widgets.kiosk-title": "Widgets Kiosk",
+    "widgets.batch-download": "Batch Download",
+    "widgets.downloading": "Downloading",
+    "widgets.selected-count": "{{count}} selected",
     "widget.remove": "Remove Widget",
 
     "texts.list-title": "Language settings",
@@ -1941,6 +1949,7 @@
     "msg.apikeys-copied": "API Key copied to clipboard",
     "msg.report-property-missing-value": "There are incorrect or missing values!",
     "msg.file-upload-failed": "Upload failed!",
+    "msg.file-upload-success": "Upload successful!",
     "msg.file-delete-failed": "Delete file failed!",
 
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",

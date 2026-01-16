@@ -36,6 +36,8 @@
             height: 85px;
             min-width: 50px;
             cursor: pointer;
+            object-fit: contain; // 等比例缩放，保持宽高比
+            background-color: rgba(255, 255, 255, 0.1); // 添加背景色以便查看透明图片
         }
 
         mat-icon {

@@ -20,7 +20,7 @@
     "header.edit-users": "Benutzer-Einstellungen",
     "header.edit-alarms": "Einstellungen für Alarme",
     "header.edit-texts": "Einstellungen für Texte",
-    "header.help": "FUXA-Hilfe",
+    "header.help": "SCADA-Hilfe",
     "header.help-tutorial": "Tutorial",
     "header.help-info": "Über",
     "header.info-version": "Version",
@@ -28,11 +28,11 @@
 
     "project.name": "Projektname",
 
-    "sidenav.title": "FUXA",
+    "sidenav.title": "SCADA",
 
-    "tutorial.title": "FUXA-Tutorial",
+    "tutorial.title": "SCADA-Tutorial",
 
-    "dlg.info-title": "FUXA",
+    "dlg.info-title": "SCADA",
 
     "dlg.layout-title": "Layout-Einstellungen",
     "dlg.layout-general": "Allgemein",
@@ -722,7 +722,7 @@
     "devices.export-csv": "CSV",
     "devices.import": "Geräte importieren",
     "device.property-client": "Geräteeigenschaft",
-    "device.property-server": "FUXA-Server-Eigenschaft",
+    "device.property-server": "SCADA-Server-Eigenschaft",
     "device.property-name": "Name",
     "device.property-type": "Typ",
     "device.property-polling": "Abfrage",

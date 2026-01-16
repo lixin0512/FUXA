@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
@@ -11,6 +12,7 @@ import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { Role } from '../../_models/user';
 import { ApiKey } from '../../_models/apikey';
+import { IndexedDBService } from '../indexeddb.service';
 
 @Injectable()
 export class ResClientService implements ResourceStorageService {
@@ -22,7 +24,10 @@ export class ResClientService implements ResourceStorageService {
 
     public onRefreshProject: () => boolean;
 
-    constructor(private http: HttpClient) {
+    constructor(
+        private http: HttpClient,
+        private indexedDB: IndexedDBService
+    ) {
     }
 
     init(bridge?: any): boolean {
@@ -54,12 +59,12 @@ export class ResClientService implements ResourceStorageService {
                 let prj = ResourceStorageService.defileProject(sprj);
                 observer.next(prj);
             } else {
-                let prj = localStorage.getItem(this.getAppId());
-                if (prj) {
-                    observer.next(JSON.parse(prj));
-                } else {
+                this.indexedDB.getItem(this.getAppId()).pipe(first()).subscribe(prj => {
+                    observer.next(prj);
+                }, err => {
+                    console.error('获取项目数据失败:', err);
                     observer.next(null);
-                }
+                });
             }
         });
     }
@@ -116,7 +121,10 @@ export class ResClientService implements ResourceStorageService {
 
     saveInLocalStorage(prj: any) {
         if (this.getAppId()) {
-            localStorage.setItem(this.getAppId(), JSON.stringify(prj));
+            this.indexedDB.setItem(this.getAppId(), prj).subscribe({
+                next: () => {},
+                error: (err) => console.error('保存项目数据失败:', err)
+            });
         }
     }
 

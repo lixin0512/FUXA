@@ -16,6 +16,10 @@
                      item of grpImages.items"
                      (click)="onSelect(item.path)"
                      class="lib-image-item"
+                     [class.dragging]="draggedImage === item.path"
+                     [draggable]="true"
+                     (dragstart)="onDragStart($event, item.path)"
+                     (dragend)="onDragEnd($event)"
                      matTooltip="{{item.name}}">
 
                     <ng-container *ngIf="isVideo(item.path); else imageTemplate">
@@ -25,7 +29,7 @@
                         </video>
                     </ng-container>
                     <ng-template #imageTemplate>
-                        <img [src]="item.path" [id]="item.path">
+                        <img [src]="item.path" [id]="item.path" draggable="false">
                     </ng-template>
                 </div>
 

@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { User, UserGroups } from '../_models/user';
 import { environment } from '../../environments/environment';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { SettingsService } from './settings.service';
 import { Utils } from '../_helpers/utils';
+import { IndexedDBService } from './indexeddb.service';
 
 @Injectable()
 export class AuthService {
@@ -17,13 +19,19 @@ export class AuthService {
 
 	constructor(
 		private http: HttpClient,
-		private settings: SettingsService
+		private settings: SettingsService,
+		private indexedDB: IndexedDBService
 	) {
-		let user = JSON.parse(localStorage.getItem('currentUser'));
-		if (user) {
-		  this.currentUser = user;
-		}
-		this.currentUser$.next(this.currentUser);
+		// 从 IndexedDB 加载用户信息
+		this.indexedDB.getItem('currentUser').pipe(first()).subscribe(user => {
+			if (user) {
+				this.currentUser = user;
+			}
+			this.currentUser$.next(this.currentUser);
+		}, err => {
+			console.error('加载用户信息失败:', err);
+			this.currentUser$.next(this.currentUser);
+		});
 	}
 
 	signIn(username: string, password: string) {
@@ -83,13 +91,19 @@ export class AuthService {
 
 	// to check by page refresh
 	private saveUserToken(user: UserProfile) {
-		localStorage.setItem('currentUser', JSON.stringify(user));
+		this.indexedDB.setItem('currentUser', user).subscribe({
+			next: () => {},
+			error: (err) => console.error('保存用户信息失败:', err)
+		});
 	}
 
 	private removeUser(): boolean {
 		const result = !!this.currentUser;
 		this.currentUser = null;
-		localStorage.removeItem('currentUser');
+		this.indexedDB.removeItem('currentUser').subscribe({
+			next: () => {},
+			error: (err) => console.error('删除用户信息失败:', err)
+		});
 		this.currentUser$.next(this.currentUser);
 		return result;
 	}

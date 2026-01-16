@@ -59,6 +59,20 @@
                     border-color: #1976d2;
                 }
 
+                &.item-selected {
+                    border-color: #ff9800;
+                    background-color: rgba(255, 152, 0, 0.2);
+                }
+
+                .item-checkbox {
+                    position: absolute;
+                    top: 4px;
+                    left: 4px;
+                    z-index: 10;
+                    background-color: rgba(255, 255, 255, 0.8);
+                    border-radius: 2px;
+                }
+
                 .download-icon {
                     position: absolute;
                     bottom: 0px;
@@ -91,6 +105,112 @@
         }
         .widget-panel {
             background-color: rgba(65, 65, 65, 0.3);
+        }
+
+        /* 拖拽上传区域样式 */
+        .drag-upload-area {
+            border: 2px dashed var(--toolboxBorder, #F1F3F4);
+            border-radius: 8px;
+            padding: 30px;
+            margin: 10px;
+            text-align: center;
+            background-color: var(--toolboxPanelBackground, #f9f9f9);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .drag-upload-area:hover {
+            border-color: var(--toolboxItemActiveBackground, #3059af);
+            background-color: var(--toolboxBackground, #FBFBFB);
+            border-style: dashed;
+        }
+
+        .drag-upload-area.drag-over {
+            border-color: var(--toolboxItemActiveBackground, #3059af);
+            background-color: rgba(48, 89, 175, 0.08);
+            border-style: solid;
+            box-shadow: 0 0 0 2px rgba(48, 89, 175, 0.1);
+        }
+
+        .drag-upload-content {
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .drag-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            color: var(--toolboxColor, #000);
+            opacity: 0.5;
+            margin-bottom: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .drag-upload-area:hover .drag-icon,
+        .drag-upload-area.drag-over .drag-icon {
+            opacity: 0.8;
+        }
+
+        .drag-text {
+            font-size: 15px;
+            color: var(--toolboxColor, #000);
+            opacity: 0.8;
+            margin: 8px 0;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .drag-hint {
+            font-size: 12px;
+            color: var(--toolboxColor, #000);
+            opacity: 0.6;
+            margin: 4px 0;
+            line-height: 1.4;
+        }
+
+        /* 上传控制区域 */
+        .upload-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+            padding: 0 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .upload-formats-text {
+            font-size: 13px;
+            color: var(--toolboxColor, #000);
+            opacity: 0.7;
+            font-weight: 400;
+        }
+
+        .upload-button-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-button {
+            min-width: 120px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .upload-icon {
+            vertical-align: middle;
+            margin-right: 6px;
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .upload-spinner {
+            display: inline-block;
+            margin-right: 6px;
         }
     }
 }

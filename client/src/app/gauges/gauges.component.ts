@@ -39,6 +39,7 @@ import { AuthService } from '../_services/auth.service';
 import { DevicesUtils, Tag } from '../_models/device';
 import { HtmlVideoComponent } from './controls/html-video/html-video.component';
 import { HtmlEchartsComponent } from './controls/html-echarts/html-echarts.component';
+import { IndexedDBService } from '../_services/indexeddb.service';
 
 @Injectable()
 export class GaugesManager {
@@ -79,7 +80,10 @@ export class GaugesManager {
 
     constructor(private hmiService: HmiService,
         private authService: AuthService,
-        private winRef: WindowRef) {
+        private winRef: WindowRef,
+        private indexedDB: IndexedDBService) {
+        // 设置 IndexedDB 服务到 HtmlImageComponent，以便静态方法可以使用
+        HtmlImageComponent.indexedDBService = this.indexedDB;
         // subscription to the change of variable value, then emit to the gauges of fuxa-view
         this.hmiService.onVariableChanged.subscribe(sig => {
             try {

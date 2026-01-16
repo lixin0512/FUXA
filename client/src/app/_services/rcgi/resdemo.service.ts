@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
@@ -11,6 +12,7 @@ import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { Role } from '../../_models/user';
 import { ApiKey } from '../../_models/apikey';
+import { IndexedDBService } from '../indexeddb.service';
 
 @Injectable()
 export class ResDemoService implements ResourceStorageService {
@@ -18,7 +20,10 @@ export class ResDemoService implements ResourceStorageService {
     public endPointConfig = '';
     public onRefreshProject: () => boolean;
 
-    constructor(private http: HttpClient) {
+    constructor(
+        private http: HttpClient,
+        private indexedDB: IndexedDBService
+    ) {
     }
 
     init(): boolean {
@@ -31,24 +36,40 @@ export class ResDemoService implements ResourceStorageService {
 
     getStorageProject(): Observable<any> {
         return new Observable((observer) => {
-            let prj = localStorage.getItem(this.getAppId());
-            if (prj) {
-                observer.next(JSON.parse(prj));
-            } else {
+            this.indexedDB.getItem(this.getAppId()).pipe(first()).subscribe(prj => {
+                if (prj) {
+                    observer.next(prj);
+                } else {
+                    // try root path
+                    this.getDemoProject().subscribe(demo => {
+                        observer.next(demo);
+                    }, err => {
+                        observer.error(err);
+                    });
+                }
+            }, err => {
+                console.error('获取项目数据失败:', err);
                 // try root path
                 this.getDemoProject().subscribe(demo => {
                     observer.next(demo);
-                }, err => {
-                    observer.error(err);
+                }, err2 => {
+                    observer.error(err2);
                 });
-            }
+            });
         });
     }
 
     setServerProject(prj: ProjectData) {
         return new Observable((observer) => {
-            localStorage.setItem(this.getAppId(), JSON.stringify(prj));
-            observer.next(null);
+            this.indexedDB.setItem(this.getAppId(), prj).subscribe({
+                next: () => {
+                    observer.next(null);
+                },
+                error: (err) => {
+                    console.error('保存项目数据失败:', err);
+                    observer.error(err);
+                }
+            });
         });
     }
 

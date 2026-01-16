@@ -20,7 +20,7 @@
   "header.edit-users": "Paramètres des utilisateurs",
   "header.edit-alarms": "Paramètres d'alarmes",
   "header.edit-texts": "Paramètres de textes",
-  "header.help": "Aide Fuxa",
+  "header.help": "Aide SCADA",
   "header.help-tutorial": "Didacticiel",
   "header.help-info": "À propos de",
   "header.change-thema": "Changer de thème (beta)",
@@ -29,11 +29,11 @@
 
   "project.name": "Nom du projet",
 
-  "sidenav.title": "Fuxa",
+  "sidenav.title": "SCADA",
 
-  "tutorial.title": "Tutoriel Fuxa",
+  "tutorial.title": "Tutoriel SCADA",
 
-  "dlg.info-title": "Fuxa",
+  "dlg.info-title": "SCADA",
 
   "dlg.layout-title": "Paramètres de mise en page",
   "dlg.layout-general": "Général",
@@ -873,7 +873,7 @@
   "device.tags-template-name-title": "Nom du modèle de tags",
   "devices.import-template": "Importer des appareils avec le modèle",
   "device.property-client": "Propriété de l'appareil",
-  "device.property-server": "Propriété du serveur FUXA",
+  "device.property-server": "Propriété du serveur SCADA",
   "device.property-name": "Nom",
   "device.property-type": "Type",
   "device.property-polling": "Freq. d'interrogation",
@@ -1388,7 +1388,7 @@
     "script.template-getHistoricalTagsoptions-tooltip": "Modèle de code pour obtenir les valeurs des tags historiques.",
 
     "client.script-access-title": "Accès des scripts client",
-    "client.script-access-info": "Configurer l'accès aux fonctions système depuis le frontend (par exemple, les widgets) via window.fuxaScriptAPI.",
+    "client.script-access-info": "Configurer l'accès aux fonctions système depuis le frontend (par exemple, les widgets) via window.SCADAScriptAPI.",
 
   "reports.list-title": "Paramètres des rapports",
   "reports.list-name": "Nom",

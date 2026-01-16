@@ -33,7 +33,7 @@
                     </mat-select>
                 </div>
                 <div class="menu">
-                    <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem">more_vert</mat-icon>
+                    <mat-icon [attr.aria-label]="'aria.more' | translate" [matMenuTriggerFor]="menuitem">more_vert</mat-icon>
                 </div>
                 <mat-menu #menuitem="matMenu">
                     <button mat-menu-item (click)="onSetLabel(i)">{{'report.tags-table-setlabel' | translate}}</button>

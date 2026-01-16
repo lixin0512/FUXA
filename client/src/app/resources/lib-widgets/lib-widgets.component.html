@@ -20,7 +20,7 @@
                  [class.selected]="selectedWidgetPath === widget.path"
                  matTooltip="{{widget.name}}">
                 <img src="{{rootPath}}/{{widget.path}}" id="{{widget.path}}">
-                <mat-icon aria-label="More"
+                <mat-icon [attr.aria-label]="'aria.more' | translate"
                           [matMenuTriggerFor]="menuview">
                     more_vert
                 </mat-icon>

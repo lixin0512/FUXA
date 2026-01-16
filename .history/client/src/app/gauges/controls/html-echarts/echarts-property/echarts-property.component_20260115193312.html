@@ -1,0 +1,47 @@
+<div class="echarts-property-container">
+    <div class="property-section">
+        <h3>{{ 'editor.chart-type' | translate }}</h3>
+        <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>{{ 'editor.chart-type' | translate }}</mat-label>
+            <mat-select [(ngModel)]="selectedChartType" (selectionChange)="onChartTypeChange($event.value)">
+                <mat-option *ngFor="let type of chartTypes" [value]="type.value">
+                    <mat-icon>{{ type.icon }}</mat-icon>
+                    <span>{{ type.label }}</span>
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="property-section">
+        <h3>{{ 'editor.variables' | translate }}</h3>
+        <app-flex-device-tag
+            [devices]="devices"
+            [variableIds]="variableIds"
+            (onVariableIdsChanged)="onVariableIdsChange($event)">
+        </app-flex-device-tag>
+    </div>
+
+    <div class="property-section">
+        <h3>{{ 'editor.auto-refresh' | translate }}</h3>
+        <mat-checkbox [(ngModel)]="property.autoRefresh" (change)="onAutoRefreshChange($event.checked)">
+            {{ 'editor.enable-auto-refresh' | translate }}
+        </mat-checkbox>
+        <mat-form-field appearance="outline" *ngIf="property.autoRefresh" style="width: 100%; margin-top: 10px;">
+            <mat-label>{{ 'editor.refresh-interval' | translate }} (ms)</mat-label>
+            <input matInput type="number" [(ngModel)]="property.refreshInterval"
+                   (ngModelChange)="onRefreshIntervalChange($event)" min="100" step="100">
+        </mat-form-field>
+    </div>
+
+    <div class="property-section">
+        <h3>{{ 'editor.chart-config' | translate }}</h3>
+        <button mat-raised-button color="primary" (click)="onEditConfig()">
+            <mat-icon>edit</mat-icon>
+            {{ 'editor.edit-config' | translate }}
+        </button>
+        <div class="config-preview" *ngIf="property.chartConfig">
+            <pre>{{ property.chartConfig | json }}</pre>
+        </div>
+    </div>
+</div>
+

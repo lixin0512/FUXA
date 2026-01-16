@@ -1,5 +1,5 @@
 <div class="svg-property-split2" *ngIf="settings">
-    <div class="svg-property" title="Gauge name">
+    <div class="svg-property" [attr.title]="'aria.gauge-name' | translate">
         <span>{{'editor.interactivity-name' | translate}}</span>
         <input type="text" id="gaugename" [(ngModel)]="settings.name" type="text" readonly />
     </div>

@@ -23,8 +23,8 @@ export class LanguageTypePropertyComponent implements OnInit {
         const languages = this.projectService.getLanguages();
         this.languagesForm = this.fb.group({
             languages: this.fb.array([], this.uniqueLanguageIdValidator),
-            defaultId: [languages.default?.id || 'EN', [Validators.required, Validators.pattern('^[A-Za-z]{2}$')]],
-            defaultName: [languages.default?.name || 'English', Validators.required]
+            defaultId: [languages.default?.id || 'zh-cn', [Validators.required, Validators.pattern('^[a-z]{2}(-[a-z]{2})?$')]],
+            defaultName: [languages.default?.name || '中文', Validators.required]
         });
 
         this.setLanguages(languages.options);

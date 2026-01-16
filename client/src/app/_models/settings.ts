@@ -1,6 +1,6 @@
 export class AppSettings {
     /** Editor language */
-    language = 'en';
+    language = 'zh-cn';
     /** Web server port */
     uiPort = 1881;
     /** Security access to enable user and authentication */

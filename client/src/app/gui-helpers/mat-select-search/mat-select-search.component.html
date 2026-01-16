@@ -3,7 +3,7 @@
 <div class="mat-select-search-inner" [ngClass]="{'mat-select-search-inner-multiple': matSelect.multiple}">
     <input matInput class="mat-select-search-input" #searchSelectInput (keydown)="_handleKeydown($event)" (input)="onInputChange($event.target.value)"
         (blur)="onBlur($event.target.value)" [placeholder]="placeholderLabel" />
-    <button mat-button *ngIf="value" mat-icon-button aria-label="Clear" (click)="_reset(true)" class="mat-select-search-clear">
+    <button mat-button *ngIf="value" mat-icon-button [attr.aria-label]="'aria.clear' | translate" (click)="_reset(true)" class="mat-select-search-clear">
         <mat-icon>close</mat-icon>
     </button>
 </div>

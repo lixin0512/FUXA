@@ -60,7 +60,7 @@
         <!-- Submeu -->
         <div class="my-form-field block mb10 submenu-header">
             <button mat-icon-button (click)="onAddChild()">
-                <mat-icon aria-label="Add">control_point</mat-icon>
+                <mat-icon [attr.aria-label]="'aria.add' | translate">control_point</mat-icon>
             </button>
             <span>{{'dlg.menuitem-add-submenu' | translate}}</span>
         </div>

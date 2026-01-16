@@ -23,7 +23,7 @@
     <span class="view-item-text">
         {{item.name}}
     </span>
-    <mat-icon aria-label="More"
+    <mat-icon [attr.aria-label]="'aria.more' | translate"
               [matMenuTriggerFor]="menuview">
         more_vert
     </mat-icon>

@@ -92,7 +92,7 @@
                                readonly
                                [(colorPicker)]="data.profile.bkcolor"
                                class="input-color"
-                               title="Change stroke color"
+                               [attr.title]="'editor.tools-strokecolor-title' | translate"
                                [style.background]="data.profile.bkcolor"
                                [cpPresetColors]="defaultColor"
                                [cpAlphaChannel]="'always'"

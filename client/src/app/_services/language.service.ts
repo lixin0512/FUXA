@@ -23,7 +23,7 @@ export class LanguageService {
             let storageLanguage = this.getStorageLanguage();
             this.languages = this.projectService.getLanguages();
             this.languageConfig = {
-                currentLanguage: storageLanguage || this.languages?.default || { id: 'EN', name: 'English' },
+                currentLanguage: storageLanguage || this.languages?.default || { id: 'zh-cn', name: '中文' },
                 ...this.languages
             };
             const user = this.authService.getUser();

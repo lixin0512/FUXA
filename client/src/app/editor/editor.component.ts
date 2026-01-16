@@ -100,6 +100,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         panelD: true,
         panelS: true,
         panelWidgets: true,
+        panelDashboard: true,
     };
     panelPropertyIdOpenState: boolean;
     panelPropertyTransformOpenState: boolean;
@@ -110,6 +111,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelHyperlinkOpenState: boolean;
     gaugeSettingsHide: boolean = false;
     gaugeSettingsLock: boolean = false;
+    cancelButtonText: string = 'Cancel';
+    okButtonText: string = 'OK';
 
     dashboard: Array<GridsterItem>;
     cardViewType = ViewType.cards;
@@ -139,6 +142,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Init Save Project event and clear gauge memory (to manage event signal/gauge)
      */
     ngOnInit() {
+        // Initialize translated button texts
+        this.translateService.get('dlg.cancel').subscribe((text: string) => {
+            this.cancelButtonText = text;
+        });
+        this.translateService.get('dlg.ok').subscribe((text: string) => {
+            this.okButtonText = text;
+        });
+
         try {
             this.subscriptionSave = this.projectService.onSaveCurrent.subscribe((mode: SaveMode) => {
                 if (mode === SaveMode.Current) {
@@ -244,9 +255,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 (eleadded) => {
                     let ga: GaugeSettings = this.getGaugeSettings(eleadded, this.ctrlInitParams);
                     this.checkGaugeAdded(ga);
+                    // 立即切换到select模式，避免在延迟期间再次点击图形组件时重复添加
                     setTimeout(() => {
                         this.setMode('select', false);
-                    }, 700);
+                    }, 0);
                     this.checkSvgElementsMap(true);
                 },
                 (eleremoved) => {
@@ -403,8 +415,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             let gs = this.gaugesManager.createSettings(ele.id, ele.type);
             if (initParams) {
-                gs.property = new GaugeProperty();
-                gs.property.address = initParams;
+                // 处理ECharts组件的初始化参数（chartType对象）
+                if (typeof initParams === 'object' && initParams.chartType) {
+                    if (!gs.property) {
+                        gs.property = {};
+                    }
+                    gs.property.chartType = initParams.chartType;
+                } else {
+                    // 其他组件的初始化参数（如image的address字符串）
+                    gs.property = new GaugeProperty();
+                    gs.property.address = initParams;
+                }
             }
             return gs;
         }
@@ -622,6 +643,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.checkFillAndStrokeColor();
         }
         this.winRef.nativeWindow.svgEditor.clickToSetMode(mode);
+    }
+
+    /**
+     * Add ECharts component to the editor
+     * @param chartType The type of chart (line, bar, pie, scatter, etc.)
+     */
+    onAddEchartsComponent(chartType: string) {
+        this.setModeParam = { chartType: chartType };
+        this.ctrlInitParams = { chartType: chartType };
+        this.setMode('own_ctrl-echarts');
     }
 
     /**
@@ -1186,6 +1217,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.panelsState.enabled = true;
         if (ps) {
             this.panelsState = Utils.mergeDeep(this.panelsState, JSON.parse(ps));
+            // 确保新添加的panelDashboard属性存在
+            if (this.panelsState.panelDashboard === undefined) {
+                this.panelsState.panelDashboard = true;
+            }
         }
     }
 
@@ -1282,6 +1317,18 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.gaugeDialog.data = {
                 settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                 views: hmi.views, dlgType: dlgType, graphs: this.projectService.getGraphs(),
+                names: names
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
+        } else if (dlgType === GaugeDialogType.Echarts) {
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                views: hmi.views, dlgType: dlgType,
                 names: names
             };
             if (!this.sidePanel.opened) {
@@ -1676,4 +1723,5 @@ interface PanelsStateType {
     panelD?: boolean;
     panelS?: boolean;
     panelWidgets?: boolean;
+    panelDashboard?: boolean;
 }

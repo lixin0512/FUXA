@@ -565,7 +565,7 @@
                                           (mouseleave)="tip.hide()"
                                           (keydown.escape)="tip.hide()"
                                           tabindex="0"
-                                          aria-label="Info">
+                                          [attr.aria-label]="'aria.info' | translate">
                                     error_outline
                                 </mat-icon>
                             </div>

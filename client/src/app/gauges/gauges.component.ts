@@ -38,6 +38,7 @@ import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { AuthService } from '../_services/auth.service';
 import { DevicesUtils, Tag } from '../_models/device';
 import { HtmlVideoComponent } from './controls/html-video/html-video.component';
+import { HtmlEchartsComponent } from './controls/html-echarts/html-echarts.component';
 
 @Injectable()
 export class GaugesManager {
@@ -74,7 +75,7 @@ export class GaugesManager {
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
         PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
-        HtmlImageComponent, PanelComponent, HtmlVideoComponent, HtmlSchedulerComponent];
+        HtmlImageComponent, PanelComponent, HtmlVideoComponent, HtmlSchedulerComponent, HtmlEchartsComponent];
 
     constructor(private hmiService: HmiService,
         private authService: AuthService,
@@ -190,6 +191,10 @@ export class GaugesManager {
             delete this.mapGauges[ga.id];
             let gauge = HtmlGraphComponent.detectChange(ga, res, ref);
             this.setGraphPropety(gauge, ga.property);
+            this.mapGauges[ga.id] = gauge;
+        } else if (ga.type.startsWith(HtmlEchartsComponent.TypeTag)) {
+            delete this.mapGauges[ga.id];
+            let gauge = HtmlEchartsComponent.detectChange(ga, res, ref);
             this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             this.mapGauges[ga.id] = HtmlBagComponent.detectChange(ga, res, ref);
@@ -550,6 +555,15 @@ export class GaugesManager {
                         });
                     }
                     break;
+                } else if (ga.type.startsWith(HtmlEchartsComponent.TypeTag)) {
+                    if (this.memorySigGauges[sig.id]) {
+                        Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                            if (this.mapGauges[k] && (this.mapGauges[k].gaugeId === ga.id || this.mapGauges[k].id === ga.id)) {
+                                HtmlEchartsComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
+                            }
+                        });
+                    }
+                    break;
                 } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
                     Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                         if (k === ga.id && this.mapGauges[k]) {
@@ -847,6 +861,12 @@ export class GaugesManager {
                 this.mapGauges[ga.id] = gauge;
             }
             return gauge;
+        } else if (ga.type.startsWith(HtmlEchartsComponent.TypeTag)) {
+            let gauge = HtmlEchartsComponent.initElement(ga, res, ref, isview);
+            if (gauge) {
+                this.mapGauges[ga.id] = gauge;
+            }
+            return gauge;
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             let gauge: NgxGaugeComponent = HtmlBagComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
@@ -925,6 +945,14 @@ export class GaugesManager {
             ga.property = ga.property || new GaugeVideoProperty();
             ga.property.options = ga.property.options || {};
             ga.property.options.address = param;
+        } else if (ga?.type?.startsWith(HtmlEchartsComponent.TypeTag)) {
+            // Set chart type for ECharts component
+            if (param && typeof param === 'object' && param.chartType) {
+                if (!ga.property) {
+                    ga.property = {};
+                }
+                ga.property.chartType = param.chartType;
+            }
         }
     }
 

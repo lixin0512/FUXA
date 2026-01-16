@@ -112,6 +112,9 @@ import { HtmlButtonComponent } from './gauges/controls/html-button/html-button.c
 import { HtmlSelectComponent } from './gauges/controls/html-select/html-select.component';
 import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.component';
 import { HtmlGraphComponent } from './gauges/controls/html-graph/html-graph.component';
+import { HtmlEchartsComponent } from './gauges/controls/html-echarts/html-echarts.component';
+import { EchartsWrapperComponent } from './gauges/controls/html-echarts/echarts-wrapper/echarts-wrapper.component';
+import { EchartsPropertyComponent } from './gauges/controls/html-echarts/echarts-property/echarts-property.component';
 import { HtmlIframeComponent } from './gauges/controls/html-iframe/html-iframe.component';
 import { HtmlBagComponent } from './gauges/controls/html-bag/html-bag.component';
 import { HtmlTableComponent } from './gauges/controls/html-table/html-table.component';
@@ -297,6 +300,9 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         HtmlSelectComponent,
         HtmlChartComponent,
         HtmlGraphComponent,
+        HtmlEchartsComponent,
+        EchartsWrapperComponent,
+        EchartsPropertyComponent,
         HtmlIframeComponent,
         HtmlImageComponent,
         HtmlBagComponent,
